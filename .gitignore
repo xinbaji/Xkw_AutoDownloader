@@ -10,3 +10,4 @@ config/config.json
 config/__pycache__/config.cpython-311.pyc
 test.py
 download/
+tasks/status.json

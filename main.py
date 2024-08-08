@@ -12,6 +12,7 @@ from email.mime.application import MIMEApplication
 from utils.log import Log
 import yagmail
 import json
+from utils.selenium import shutil
 class Xkw:
     def __init__(self) -> None:
         #初始化 检测config内的用于下载的账号密码，若没有要求用户手动输入。
@@ -61,7 +62,8 @@ class Xkw:
         sleep(2)
         self.driver.wait_to_be_clickable(self.xpath.download_confirm_button()).click()
         self.driver.switch_to_default_frame()
-        self.driver.wait_string_to_be_visible(self.xpath.download_status(),"下载完成")
+        sleep(15)
+        self.driver.get("https://www.zxxk.com/")
         
     
     def get_filelist(self):
@@ -85,13 +87,16 @@ class Xkw:
         yag_server= yagmail.SMTP(user=self.config.send_from_email(),password=self.config.code(),host='smtp.qq.com')
         email_to=[recipientAddrs,]
         email_attachment_list=self.get_filelist()
-        email_title=email_attachment_list[0].replace('.\\download\\',"") + '(自动发送）'
-        email_content='helloworld!'
+        email_title=email_attachment_list[0].replace('.\\download\\',"") + '等文件 (自动发送）'
+        email_content='您的资料已发送，请查收哦~'
          
         yag_server.send(email_to,email_title,email_content,email_attachment_list)
         self.log.info("发送成功！")
         yag_server.close()
-         
+    def update_status(self,status):
+        with open("./tasks/status.json","w") as f:
+                    json.dump(status,f)
+                    f.close()     
     def get_task(self):
         self.log.info("开始检测任务队列")
         download_location=os.path.join(os.getcwd(),"download")
@@ -99,26 +104,32 @@ class Xkw:
                     "download.default_directory": download_location
                 }
         self.driver=Driver(prefs)
+        self.update_status("done")
         while True:
             if os.path.exists("./tasks/task.json") == True:
                 with open("./tasks/task.json","r") as f:
                     task=json.load(f)
-                    f.close()
+                    f.close()  
                 os.remove("./tasks/task.json")
-                
+                self.update_status("busy")
                 
                 
                 for i in task['task']:
                     self.download(i)
                 filelist=self.get_filelist()
                 if task['recv_email'] != "":
-                    self.send_email(filelist,task['recv_email'])
+                    self.send_yagmail(task['recv_email'])
                 self.log.info("下载发送任务结束，准备接受新任务")
+                with open("./tasks/status.json","r") as f:
+                    status=json.load(f)
+                    f.close()
+                shutil.rmtree("./download")
+                os.makedirs("download")
+                self.update_status("done")
             else:
                 sleep(5)
                     
-'''Xkw().get_task()'''
-Xkw().send_yagmail('2417985715@qq.com')
+Xkw().get_task()
         
         
                 
