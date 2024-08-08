@@ -1,0 +1,12 @@
+utils/__pycache__/selenium.cpython-311.pyc
+utils/__pycache__/playwright.cpython-311.pyc
+utils/__pycache__/ocr.cpython-311.pyc
+utils/__pycache__/log.cpython-311.pyc
+utils/__pycache__/encrypt.cpython-311.pyc
+log/log.txt
+data/__pycache__/path.cpython-311.pyc
+data/cookies.json
+config/config.json
+config/__pycache__/config.cpython-311.pyc
+test.py
+download/
