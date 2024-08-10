@@ -13,6 +13,7 @@ from utils.log import Log
 import yagmail
 import json
 from utils.selenium import shutil
+from utils.email import mail
 class Xkw:
     def __init__(self) -> None:
         #初始化 检测config内的用于下载的账号密码，若没有要求用户手动输入。
@@ -28,6 +29,7 @@ class Xkw:
         self.xpath=Xpath()
         self.css=Css()
         self.log=Log('main','i')
+        self.mail=mail()
         
         
     def login(self):    
@@ -93,6 +95,11 @@ class Xkw:
         yag_server.send(email_to,email_title,email_content,email_attachment_list)
         self.log.info("发送成功！")
         yag_server.close()
+        
+    def sendmail_attachments(self,recipientAddrs:str):
+        email_attachment_list=os.listdir(".\download")
+        file_path=".\\download\\"
+        self.mail.sendmail(recipientAddrs=recipientAddrs,file_path=file_path,files_nameList=email_attachment_list)
     def update_status(self,status):
         with open("./tasks/status.json","w") as f:
                     json.dump(status,f)
@@ -118,7 +125,7 @@ class Xkw:
                     self.download(i)
                 filelist=self.get_filelist()
                 if task['recv_email'] != "":
-                    self.send_yagmail(task['recv_email'])
+                    self.sendmail_attachments(task['recv_email'])
                 self.log.info("下载发送任务结束，准备接受新任务")
                 with open("./tasks/status.json","r") as f:
                     status=json.load(f)
@@ -129,7 +136,8 @@ class Xkw:
             else:
                 sleep(5)
                     
-Xkw().get_task()
+#Xkw().get_task()
+Xkw().sendmail_attachments("407510271@qq.com")
         
         
                 
