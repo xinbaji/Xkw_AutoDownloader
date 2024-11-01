@@ -1,4 +1,4 @@
-log/log.txt
+log/
 data/cookies.json
 config/config.json
 test.py
@@ -7,3 +7,6 @@ tasks/status.json
 bot/
 utils/__pycache__/
 data/__pycache__/
+env/
+temp/
+config/__pycache__/

@@ -7,7 +7,13 @@ from utils.encrypt import usnmdcfiiro1cqqt, pwdcfiiro1c
 
 class Config:
     def __init__(self) -> None:
-        self.log = Log("config", "d")
+        self.log = Log("config", "i")
+
+        if os.path.exists("./download") == False:
+            os.makedirs("download")
+            os.makedirs("tasks", exist_ok=True)
+            os.makedirs("env", exist_ok=True)
+            os.makedirs("temp", exist_ok=True)
 
         if not os.path.exists("./config/config.json"):
             self.config = {
@@ -24,6 +30,11 @@ class Config:
 
         if self.username() is None:
             self.get_username_and_password()
+
+            try:
+                os.remove(".\\env\\Login_ok.txt")
+            except Exception as e:
+                self.log.debug("无法删除文件或文件不存在：Exception:" + str(e))
 
     def get_username_and_password(self):
         username = input("请输入用户名（按回车键确认）：")

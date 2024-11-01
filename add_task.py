@@ -25,6 +25,7 @@ while True:
 dic = {"recv_email": email, "task": task}
 os.makedirs("tasks", exist_ok=True)
 with open("./tasks/task.json", "w") as f:
+
     json.dump(dic, f)
     f.close()
 

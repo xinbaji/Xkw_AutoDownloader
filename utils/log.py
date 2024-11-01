@@ -1,17 +1,18 @@
 import logging
 import os
+import time
 
 
 class Log:
     def __init__(self, log_name, mode: str = "i") -> None:
         log_level = logging.DEBUG if mode == "d" else logging.INFO
-        if not os.path.exists("./log/log.txt"):
+        log_file_name = time.strftime("%Y-%m-%d", time.localtime())
+        if not os.path.exists("./log/" + log_file_name + ".txt"):
             os.makedirs("log", exist_ok=True)
-            with open("./log/log.txt", "w") as f:
-                f.write("日志生成成功！")
-                f.write("\n")
+            with open("./log/" + log_file_name + ".txt", "w") as f:
+                f.write("*********xkw_autodownloader log_file************\n")
                 f.close()
-        handler = logging.FileHandler("./log/log.txt")
+        handler = logging.FileHandler("./log/" + log_file_name + ".txt")
         handler.setLevel(level=log_level)
         formatter = logging.Formatter(
             "%(asctime)s - %(funcName)s - %(levelname)s - %(message)s"

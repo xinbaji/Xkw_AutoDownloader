@@ -23,8 +23,9 @@ class Xkw:
         if os.path.exists("./download") == False:
             os.makedirs("download")
             os.makedirs("tasks", exist_ok=True)
+            os.makedirs("env", exist_ok=True)
+            os.makedirs("temp", exist_ok=True)
 
-        self.isLogin = 0
         self.xpath = Xpath()
         self.css = Css()
         self.log = Log("main", "i")
@@ -46,25 +47,28 @@ class Xkw:
         self.driver.wait_to_be_visible(self.xpath.login_commit_button()).click()
         self.driver.refresh()
         self.driver.driver.implicitly_wait(60)
-        self.driver.save_cookies()
         self.config.save_to_config_file()
+
+        # 登录成功，保存登录状态信息
+        with open(".\\env\\Login_ok.txt", "w") as f:
+            f.close()
 
     def download(self, url):
 
         # 检测是否登录
-        self.driver.get(url, cookies=False)
+
+        self.driver.get(url)
         self.driver.driver.implicitly_wait(60)
-        if self.isLogin == 0:
+        if os.path.exists(".\\env\\Login_ok.txt") == False:
             self.login()
         self.driver.wait_to_be_visible(self.xpath.ppt_download_button())
         self.driver.force_click(self.xpath.ppt_download_button())
-        self.isLogin = 1
         self.driver.switch_to_iframe(self.xpath.download_iframe())
         self.driver.wait_to_be_clickable(self.xpath.download_confirm_button())
         sleep(2)
         self.driver.wait_to_be_clickable(self.xpath.download_confirm_button()).click()
-        self.driver.switch_to_default_frame()
-        sleep(15)
+        sleep(20)
+        # TODO:文件下载状态检测
         self.driver.get("https://www.zxxk.com/")
 
     def get_filelist(self):
@@ -110,7 +114,7 @@ class Xkw:
 
     def get_task(self):
         self.log.info("开始检测任务队列")
-        download_location = os.path.join(os.getcwd(), "download")
+        download_location = os.path.join(os.getcwd(), "temp")
         prefs = {"download.default_directory": download_location}
         self.driver = Driver(prefs)
         self.update_status("done")
@@ -126,13 +130,21 @@ class Xkw:
                     self.download(i)
                 filelist = self.get_filelist()
                 if task["recv_email"] != "":
-                    self.send_yagmail(task["recv_email"])
+                    try:
+                        self.send_yagmail(task["recv_email"])
+
+                    except SMTPSenderRefused as sr:
+                        self.log.error("Message too large.")
+
+                else:
+                    for f in os.listdir(".\\temp"):
+                        shutil.move(
+                            os.path.join(os.getcwd(), "temp", f),
+                            os.path.join(os.getcwd(), "download"),
+                        )
+                shutil.rmtree("./temp")
+                os.makedirs("temp")
                 self.log.info("下载发送任务结束，准备接受新任务")
-                with open("./tasks/status.json", "r") as f:
-                    status = json.load(f)
-                    f.close()
-                shutil.rmtree("./download")
-                os.makedirs("download")
                 self.update_status("done")
             else:
                 sleep(5)
@@ -140,7 +152,4 @@ class Xkw:
 
 xkw = Xkw()
 while True:
-    try:
-        xkw.get_task()
-    except SMTPSenderRefused as sr:
-        xkw.log.error("Message too large.")
+    xkw.get_task()
