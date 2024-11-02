@@ -118,11 +118,14 @@ class Xkw:
                 break
 
     def send_yagmail(self, recipientAddrs):
-
+        host_domain_list = ["163.com", "qq.com"]
+        for i in host_domain_list:
+            if i in self.config.send_from_email():
+                host_domain = "smtp." + i
         yag_server = yagmail.SMTP(
             user=self.config.send_from_email(),
             password=self.config.code(),
-            host="smtp.163.com",
+            host=host_domain,
         )
         email_to = [
             recipientAddrs,
