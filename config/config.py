@@ -1,6 +1,6 @@
 import os
 import json
-
+import shutil
 from utils.log import Log
 from utils.encrypt import usnmdcfiiro1cqqt, pwdcfiiro1c
 
@@ -32,9 +32,10 @@ class Config:
             self.get_username_and_password()
 
             try:
-                os.remove(".\\env\\Login_ok.txt")
+                shutil.rmtree("./env")
             except Exception as e:
-                self.log.debug("无法删除文件或文件不存在：Exception:" + str(e))
+                self.log.debug("无法删除目录或目录不存在：Exception:" + str(e))
+            os.makedirs("env", exist_ok=True)
 
     def get_username_and_password(self):
         username = input("请输入用户名（按回车键确认）：")

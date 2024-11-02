@@ -73,9 +73,14 @@ class Css:
             "login_commit_button": '//*[@id="accountLoginBtn"]',
             "ppt_download_button": '//*[@id="btnSoftDownload"]',
             "download_iframe": "/html/body/div[24]/div/iframe",
+            "download_iframe2": "#layui-layer-iframe100002",
             "download_confirm_button": "/html/body/div[1]/div[2]/a",
         }
 
     def login_button(self):
         locator = (By.CSS_SELECTOR, self.CSS["login_button"])
+        return locator
+
+    def download_iframe2(self):
+        locator = (By.CSS_SELECTOR, self.CSS["download_iframe2"])
         return locator

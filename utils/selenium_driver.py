@@ -7,26 +7,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
 from utils.log import Log
-import getpass
-import platform
-
-system = platform.system()
-
-if system.startswith("Windows"):
-    # USER_DIR_PATH = (f"C:/Users/{getpass.getuser()}/AppData/Local/Microsoft/Edge/User Data")
-    USER_DIR_PATH = f"C:\\Users\\40751\\Desktop\\Xkw_AutoDownloader\\env"
-    EXEC_DIR_PATH = f"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
 
 
 class Driver:
 
-    def __init__(self, prefs: dict = {}) -> None:
+    def __init__(self) -> None:
         self.log = Log("selenium", "i")
-
+        self.download_location = os.path.join(os.getcwd(), "temp")
+        self.prefs = {"download.default_directory": self.download_location}
+        self.USER_DIR_PATH = os.path.join(os.getcwd(), "env")
         options = EdgeOptions()
-        options.add_experimental_option("prefs", prefs)
+        options.add_experimental_option("prefs", self.prefs)
         options.add_experimental_option("detach", True)
-        options.add_argument("--user-data-dir=" + USER_DIR_PATH)
+        options.add_argument("--user-data-dir=" + self.USER_DIR_PATH)
         options.add_argument("--remote-debugging-port=9222")
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
@@ -53,18 +46,16 @@ class Driver:
             "locator": locator,
             "retryTime": retryTime,
         }
-        for i in range(0, retryTime, 1):
-            try:
-                self.log.debug("正在寻找元素：" + str(locator[1]))
-                element = WebDriverWait(self.driver, 5).until(case(locator))
-                return element
-            except TimeoutException:
-                self.log.debug("args:" + str(argsDic))
-                self.log.error("第 " + str(i + 1) + " 次等待超时，刷新页面 ..")
-
-                self.driver.refresh()
-
-        self.log.error("等待元素超时" + str(argsDic))
+        try:
+            self.log.info(
+                "正在寻找元素：" + str(locator[1]) + "寻找成功条件：" + str(case)
+            )
+            element = WebDriverWait(self.driver, retryTime).until(case(locator))
+            return element
+        except TimeoutException:
+            self.log.debug("args:" + str(argsDic))
+            self.log.error("等待元素超时" + str(argsDic))
+            raise TimeoutException
 
     def wait_to_be_visible(self, locator, retryTime: int = 20) -> WebElement:
         return self.wait_to_be(EC.presence_of_element_located, locator, retryTime)
@@ -111,14 +102,15 @@ class Driver:
             "locator": locator,
             "retryTime": retryTime,
         }
-        for _ in range(0, retryTime, 1):
-            try:
-                element = WebDriverWait(self.driver, 60).until(
-                    EC.frame_to_be_available_and_switch_to_it(locator)
-                )
-                return element
-            except TimeoutException:
-                self.log.error("切换iframe超时: args:" + str(argsDic))
+        try:
+            element = WebDriverWait(self.driver, retryTime).until(
+                EC.frame_to_be_available_and_switch_to_it(locator)
+            )
+            return element
+        except TimeoutException:
+            pass
+        self.log.error("切换iframe超时: args:" + str(argsDic))
+        raise TimeoutException
 
     def switch_to_default_frame(self):
         try:

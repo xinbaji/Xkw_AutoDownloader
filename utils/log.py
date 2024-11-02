@@ -13,9 +13,9 @@ class Log:
                 f.write("*********xkw_autodownloader log_file************\n")
                 f.close()
         handler = logging.FileHandler("./log/" + log_file_name + ".txt")
-        handler.setLevel(level=log_level)
+        handler.setLevel(level=logging.DEBUG)
         formatter = logging.Formatter(
-            "%(asctime)s - %(funcName)s - %(levelname)s - %(message)s"
+            "%(asctime)s - " + log_name + " - %(levelname)s - %(message)s"
         )
         handler.setFormatter(formatter)
         console = logging.StreamHandler()
