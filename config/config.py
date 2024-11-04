@@ -21,6 +21,7 @@ class Config:
                 "username": "",
                 "password": "",
                 "code": "",
+                "driver": "",
             }
 
         else:
@@ -85,3 +86,17 @@ class Config:
 
     def get_encryed_val(self, str):
         return pwdcfiiro1c(str)
+
+    def default_driver(self):
+        try:
+            if self.config["driver"] == "":
+                return None
+            else:
+                return self.config["driver"]
+        except KeyError:
+            self.add("driver", "")
+            return None
+
+    def add(self, key, value):
+        self.config[key] = value
+        self.save_to_config_file()

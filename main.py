@@ -41,8 +41,6 @@ class Xkw:
         self.driver.wait_to_be_visible(self.xpath.login_switch_button())
         sleep(5)
         self.driver.wait_to_be_visible(self.xpath.login_switch_button()).click()
-        print(self.config.get_encryed_val(self.config.username()))
-        print(self.config.get_encryed_val(self.config.password()))
         self.driver.wait_to_be_visible(self.xpath.login_username_input()).send_keys(
             self.config.username()
         )
@@ -174,10 +172,17 @@ class Xkw:
                 else:
                     for f in os.listdir(".\\temp"):
                         # TODO：移动文件有点问题
-                        shutil.move(
-                            os.path.join(os.getcwd(), "temp", f),
-                            os.path.join(os.getcwd(), "download"),
-                        )
+                        try:
+                            shutil.move(
+                                os.path.join(os.getcwd(), "temp", f),
+                                os.path.join(os.getcwd(), "download"),
+                            )
+                        except shutil.Error as e:
+                            if "already exists" in e:
+                                pass
+                            else:
+                                self.log.error(e)
+                                raise shutil.Error(e)
                 self.log.info("任务完成，准备清理临时文件...")
                 while True:
                     try:

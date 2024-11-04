@@ -1,22 +1,47 @@
 import json
 import time
 import os
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchElementException,
+    NoSuchDriverException,
+)
 from selenium.webdriver import Edge, EdgeOptions
+from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
 from utils.log import Log
+from config.config import Config
 
 
 class Driver:
 
     def __init__(self) -> None:
+        self.config = Config()
         self.log = Log("selenium", "i")
+
+        if self.config.default_driver() == "chrome":
+            __driver = Chrome
+            options = ChromeOptions()
+        elif self.config.default_driver() == "edge":
+            __driver = Edge
+            options = EdgeOptions()
+        else:
+            if self.driver_isavailable(target_driver=Chrome):
+                __driver = Chrome
+                options = ChromeOptions()
+                self.config.add("driver", "chrome")
+            elif self.driver_isavailable(target_driver=Edge):
+                __driver = Edge
+                options = EdgeOptions()
+                self.config.add("driver", "edge")
+            else:
+                self.log.error("无支持的浏览器，安装edge或chrome。")
+                raise NoSuchDriverException("无支持的浏览器，安装edge或chrome。")
         self.download_location = os.path.join(os.getcwd(), "temp")
         self.prefs = {"download.default_directory": self.download_location}
         self.USER_DIR_PATH = os.path.join(os.getcwd(), "env")
-        options = EdgeOptions()
         options.add_experimental_option("prefs", self.prefs)
         options.add_experimental_option("detach", True)
         options.add_argument("--user-data-dir=" + self.USER_DIR_PATH)
@@ -24,9 +49,19 @@ class Driver:
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_argument("log-level=3")
-
-        self.driver = Edge(options=options)
+        self.driver = __driver(options=options)
         self.driver.set_page_load_timeout(10)
+
+    def driver_isavailable(self, target_driver) -> bool:
+        try:
+            __driver = target_driver()
+        except NoSuchDriverException:
+            return False
+        except Exception as e:
+            self.log.error(e)
+            return False
+        else:
+            return True
 
     def get(self, url):
         self.driver.get(url)

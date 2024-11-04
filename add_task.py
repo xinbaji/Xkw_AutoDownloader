@@ -3,7 +3,7 @@ import json
 
 task = []
 count = 1
-debug_mode = False  # 调试模式
+debug_mode = True  # 调试模式
 if debug_mode == True:
     email = ""
     task = []
