@@ -1,2 +1,2 @@
-selenium==3.141.0
+selenium
 yagmail==0.15.293

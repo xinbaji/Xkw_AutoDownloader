@@ -4,9 +4,10 @@ import os
 from selenium.common.exceptions import (
     TimeoutException,
     NoSuchElementException,
-    NoSuchDriverException,
 )
-from selenium.webdriver import Edge, EdgeOptions
+
+from selenium.webdriver import Edge
+from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver import Chrome, ChromeOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,6 +15,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from utils.log import Log
 from config.config import Config
 
+class NoSuchDriverException(Exception):
+    pass
 
 class Driver:
 

@@ -8,7 +8,6 @@ from threading import Thread
 from smtplib import SMTPSenderRefused
 
 from utils.log import Log
-from utils.encrypt import pwdcfiiro1c, usnmdcfiiro1cqqt
 from utils.selenium_driver import Driver
 from data.path import Xpath, Css
 from config.config import Config
@@ -155,7 +154,7 @@ class Xkw:
                 with open("./tasks/task.json", "r") as f:
                     task = json.load(f)
                     f.close()
-                os.remove("./tasks/task.json")
+
                 self.update_status("busy")
 
                 for i in task["task"]:
@@ -184,6 +183,7 @@ class Xkw:
                                 self.log.error(e)
                                 raise shutil.Error(e)
                 self.log.info("任务完成，准备清理临时文件...")
+                os.remove("./tasks/task.json")
                 while True:
                     try:
                         shutil.rmtree("./temp")

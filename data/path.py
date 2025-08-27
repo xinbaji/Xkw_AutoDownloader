@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 
+'''TODO:学科网更新了 css和xpath变了 并且学科网加入了反爬机制 以下路径不可用'''
 
 class Url:
     def __init__(self) -> None:
@@ -66,7 +67,7 @@ class Xpath:
 class Css:
     def __init__(self) -> None:
         self.CSS = {
-            "login_button": "#un-login > a.login-btn",
+            "login_button": "#LoginInfo > span > a.login-btn",
             "login_switch_button": "/html/body/div[1]/div/div[2]/div[4]/button",
             "login_username_input": '//*[@id="username"]',
             "login_password_input": '//*[@id="password"]',
