@@ -10,3 +10,4 @@ data/__pycache__/
 env/
 temp/
 config/__pycache__/
+/.venv/

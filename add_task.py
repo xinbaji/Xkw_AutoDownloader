@@ -10,7 +10,9 @@ if debug_mode == True:
 else:
     while True:
         email = input("请输入接收者邮箱（无需发送请留空回车）：")
-        if "@" in email and "com" in email:
+        if email == "":
+            break
+        elif "@" in email and "com" in email:
             break
         else:
             print("输入邮箱地址非法，请重新输入\n")
