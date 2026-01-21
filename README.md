@@ -16,6 +16,11 @@
 
 > ⚠️ 请确保已安装 Python 3.x 及相关依赖包
 
+```
+pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
+```
+
+
 ---
 
 ## 🚀 使用方法
@@ -27,7 +32,6 @@
 #### Setting:
 ```
 username = "your_phone_number"  # 登录学科网的手机号
-
 password = "your_password"      # 登录学科网的密码
 download_location = ""          # 下载文件保存位置，为空则默认保存到./download目录
     
@@ -47,13 +51,14 @@ download_location: 下载文件的保存路径，留空则默认保存到项目�
 
 sender_email: 用于发送邮件的邮箱地址（QQ邮箱或163邮箱）
 
-sender_passcode: 邮箱的授权码（不是邮箱登录密码），获取方式请参考相应邮箱的帮助文档
+sender_passcode: 邮箱的授权码（不是邮箱登录密码），获取方式：在邮箱中申请开启SMTP服务时 邮箱给你提供的授权码
 
 send_files_location: 邮件发送的文件路径
 
 在 `settings.py` 文件中配置好相关参数后，运行 `main.py` 文件即可开始下载。
 
-### 2. 运行主程序 `main.py`
+### 2. 编写主程序 `main.py` 并运行
+- main.py` - 程序入口文件有范例，想下载几个课件就复制download函数几次 里面填上链接
 
 
 ### 主要模块说明
@@ -71,8 +76,7 @@ send_files_location: 邮件发送的文件路径
 
 ```
 主要函数：
-init(): 初始化下载器，设置
-下载路径、日志和浏览器驱动
+init(): 初始化下载器，设置下载路径、日志和浏览器驱动
 handle_login_button(): 处理登录按钮点击，执行登录流程
 handle_already_login(): 处理已登录状态
 login(): 登录控制，判断是否需要登录
@@ -91,7 +95,6 @@ download(url: str) -> bool: 执行下载的核心函数，接受URL参数并返�
 页面导航与状态检查
 截图功能
 窗口切换等
-
 ```
 
 - `utils/path.py` - 页面路径配置
@@ -108,10 +111,6 @@ iframe元素
 
 - `utils/mail.py` - 邮件发送功能
   - 提供邮件发送功能，支持发送下载的文件。
-
-```
-
-```
 
 ### Downloader函数详细用法
 
@@ -135,7 +134,6 @@ download(url: str) -> bool
 点击下载按钮
 处理下载过程中的各种情况
 返回下载状态
-
 ```
 
 ### 注意事项
@@ -150,18 +148,16 @@ download(url: str) -> bool
 
 ### 常见问题
 
-```
-Q: 邮箱发送有限制吗？ A: 由于各大邮箱的SMTP发送限制，邮箱只能发送50M以下的课件。
 
-Q: 下载速度很慢怎么办？ A: 可能是学科网对相同IP或账号的访问频率限制导致的，建议降低下载频率。
+- Q: 邮箱发送有限制吗？ A: 由于各大邮箱的SMTP发送限制，邮箱只能发送50M以下的课件。
 
-Q: 出现验证码或微信验证怎么办？ A: 需要手动完成验证，程序会在这些步骤暂停等待用户操作。
+- Q: 下载速度很慢怎么办？ A: 可能是学科网对相同IP或账号的访问频率限制导致的，建议降低下载频率。
 
-```
+- Q: 出现验证码或微信验证怎么办？ A: 需要手动完成验证，程序会在这些步骤暂停等待用户操作。
+
+
 
 ---
-
-
 
 ### 许可证
 

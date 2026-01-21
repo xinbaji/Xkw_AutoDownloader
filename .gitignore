@@ -11,3 +11,7 @@ env/
 temp/
 config/__pycache__/
 /.venv/
+config\__pycache__
+__pycache__
+/__pycache__
+/.vscode
