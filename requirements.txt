@@ -1,2 +1,2 @@
 selenium
-yagmail==0.15.293
+yagmail
